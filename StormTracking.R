@@ -9,7 +9,9 @@
     
   require(lubridate)
     
-  library(ggplot2)
+  require(ggplot2)
+    
+  require(ggrepel)
     
   library(scales)
    
@@ -136,7 +138,7 @@ library(wordcloud)
     
     dataNew <- cbind(dataNew,Begin,End)
  
-    
+    dataNew$EVTYPE <- toupper(dataNew$EVTYPE)
     
       #----------------------------------------------------------------------------------------------------------------------------------------------           
       
@@ -221,7 +223,10 @@ library(wordcloud)
                       rot.per=0.35, use.r.layout=TRUE, colors=pal, main="Events resulting in Injury")
             
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
+                                                                                
+                                                                                    # Charts to display data
             
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
             
             # Bar Chart 
             ggplot(data = stormCasualty, aes(x = YEAR, y = DEATH)) +
@@ -265,6 +270,12 @@ library(wordcloud)
             
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
             
+ 
+            #Summarize data where a death occurred
+            TopCasualty <- 
+              stormCasualty %>%
+              group_by(EVTYPE)  %>%  
+              select(EVTYPE,DEATH = sum(DEATH),INJURY= sum(INJURY)) 
             
             TopInj <- 
               stormCasualty %>%
@@ -278,17 +289,37 @@ library(wordcloud)
               summarize(DEATH=sum(DEATH, na.rm=TRUE))  %>%  
               select(EVTYPE,DEATH) 
             
+            TopCasualty <- 
+              TopCasualty %>%
+              group_by(EVTYPE)  %>%
+              summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %>%
+              select(EVTYPE,DEATH,INJURY) 
             
-            TopInjuries <- data.table(TopInj, Key="EVTYPE")
+             
+            #Get the top 20 death causing weather types    
+            TopInj<- TopInj[order(-TopInj$INJURY),]
+       
+            TopInj<- head(TopInj,20)
             
-            TopInjuries <- TopInjuries[, head(.SD,10),by="INJURY"]
+        
+            #Get the top 20 death causing weather types    
+            TopDeath <- TopDeath[order(-TopDeath$DEATH),]
             
+            TopDeath <- head(TopDeath,20)
             
-            # Stacked Bar Plot with Colors and Legend
-          
-#             barplot(counts, main="Car Distribution by Gears and VS",
-#                     xlab="Number of Gears", col=c("darkblue","red"),
-#                     legend = rownames(counts))
+            # Injury and Death top 20
+            stormCS <- merge(TopInj,TopDeath, by = "EVTYPE", all = TRUE)
+            
+            ggplot(stormCS, aes(DEATH, INJURY)) +
+              geom_point(color = 'red') +
+              geom_text_repel(aes(label = stormCS$EVTYPE)) +
+              theme_classic(base_size = 16)
+       
+            
+#             ggplot(TopCasualty, aes(DEATH, INJURY)) +
+#               geom_point(aes(fill=TopCasualty$EVTYPE), alpha=0.3) +
+#              # geom_text_repel(aes(label = EVTYPE)) +
+#               theme_classic(base_size = 10)
     #----------------------------------------------------------------------------------------------------------------------------------------------           
           
     #  2.   Across the United States, which types of events have the greatest economic consequences?

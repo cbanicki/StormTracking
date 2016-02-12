@@ -3,21 +3,17 @@
 
   StormTracking <- function() {
     
-  library(dplyr)
-   
-  require(data.table)
-    
-  require(lubridate)
-    
-  require(ggplot2)
-    
-  require(ggrepel)
-    
-  library(scales)
-   
-library(tm)
-library(SnowballC)
-library(wordcloud)
+  library(dplyr) #
+  require(data.table) #
+  require(lubridate) #
+  require(ggplot2) #
+  require(ggrepel) #
+  require(ggmap) #
+  require(rworldmap)
+  require(scales)
+  require(tm)
+  require(SnowballC)
+  require(wordcloud) #
    
 # library(grid)
   
@@ -70,6 +66,8 @@ library(wordcloud)
     ## Read tracking data
     data <- read.csv("repdata-data-StormData.csv", header = TRUE,na.strings = c("NA"))
     
+    states <- read.csv("StatesLatLong.csv", header = TRUE, na.strings = c("NA"))
+    
 
     #data<- data[order(-data$REFNUM),] 
     
@@ -77,19 +75,31 @@ library(wordcloud)
     
     dataCorpus <- Corpus(VectorSource(dataSum$REMARKS))
     
-    eopCorpus <- tm_map(jeopCorpus, PlainTextDocument)
+    # eopCorpus <- tm_map(jeopCorpus, PlainTextDocument)
     
     rm(data)
     
-    timeZones <- data.frame(TIME_ZONE = c("CST","AKS","MST","PST","EST","ESt","HST","SST","AST","GMT","UTC","MDT","EDT","PDT","CDT","GST"),
-                            tz = c("CST6CDT","America/Anchorage","MST7MDT","PST8PDT","EST5EDT","EST5EDT","HST","Pacific/Samoa","America/Puerto_Rico","GMT","UTC",
-                                   "US/Mountain","US/Eastern","US/Pacific","US/Central","Asia/Bahrain"))
-     #  STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
+#     timeZones <- data.frame(TIME_ZONE = c("CST","AKS","MST","PST","EST","ESt","HST","SST","AST","GMT","UTC","MDT","EDT","PDT","CDT","GST"),
+#                             tz = c("CST6CDT","America/Anchorage","MST7MDT","PST8PDT","EST5EDT","EST5EDT","HST","Pacific/Samoa","America/Puerto_Rico","GMT","UTC",
+#                                    "US/Mountain","US/Eastern","US/Pacific","US/Central","Asia/Bahrain"))
     
-    dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
+    #  STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
+    
+#     dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
+#     
+#     dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
+    
+    # Get the average lat and long for each state
+    dataNew <- merge(dataSum,states, by = "STATE", all = TRUE)
+    
+    # some Event Types are in mixed case, do avoid duplication convert them to UPPER
+    dataNew$EVTYPE <- toupper(dataNew$EVTYPE)
     
     #Order the data by the latest date just for more complete data in head commands
     dataNew<- dataNew[order(-dataNew$REFNUM),] 
+    
+    
+    dataNew <- tbl_df(dataNew)
     
     #------------------------------------------------------------------------------------------------------------------------------------------------------------------
     #                 Interested in getting the datetime by timezone correctly into one field to help with analysis
@@ -124,7 +134,6 @@ library(wordcloud)
     dataNew["endDT"] <- endDT
     
     
-    
     # How can I capture these using the correct timezone???
     
     Begin <- sapply( beginDT, function(x) paste(strsplit(x, split = " ")[[1]][1:3], 
@@ -137,9 +146,9 @@ library(wordcloud)
     End <- strptime(as.character(End), format = "%m/%d/%Y %I:%M:%S %p")
     
     dataNew <- cbind(dataNew,Begin,End)
- 
-    dataNew$EVTYPE <- toupper(dataNew$EVTYPE)
     
+    
+
       #----------------------------------------------------------------------------------------------------------------------------------------------           
       
      
@@ -158,14 +167,14 @@ library(wordcloud)
               # Order by most recent year
               stormDeath<- stormDeath[order(-stormDeath$YEAR),] 
               
-              stormHurt <- 
-              dataNew %>%
-              group_by(YEAR=as.numeric(format(Begin,"%Y")),MONTH=as.numeric(format(Begin,"%m")),STATE,EVTYPE)  %>%  
-              summarize(INJURY=sum(INJURIES, na.rm=TRUE))  %>%  
-              select(YEAR,MONTH,STATE,EVTYPE,INJURY) 
-            
-              # Order by most recent year
-              stormhURT<- stormHurt[order(-stormHurt$YEAR),]
+#               stormHurt <- 
+#               dataNew %>%
+#               group_by(YEAR=as.numeric(format(Begin,"%Y")),MONTH=as.numeric(format(Begin,"%m")),STATE,EVTYPE)  %>%  
+#               summarize(INJURY=sum(INJURIES, na.rm=TRUE))  %>%  
+#               select(YEAR,MONTH,STATE,EVTYPE,INJURY) 
+#             
+#               # Order by most recent year
+#               stormhURT<- stormHurt[order(-stormHurt$YEAR),]
               
             
               stormCasualty <- 
@@ -178,7 +187,7 @@ library(wordcloud)
  #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
                                                          # Wordcloud for Remarks,  Deaths vs Injuries
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-            par(mfrow=c(1,2))
+            # par(mfrow=c(1,2))
             
             pal <- brewer.pal(9,"YlGnBu")
             pal <- pal[-(1:4)]
@@ -199,83 +208,15 @@ library(wordcloud)
             wordcloud(dataCorpus, max.words = 50, random.order = FALSE,
                       rot.per=0.35, use.r.layout=TRUE, colors=pal, main="Events resulting in Death")
             
-            
-            
-            # Wordcloud for Injury
-            
-            pal <- brewer.pal(9,"YlGnBu")
-            pal <- pal[-(1:4)]
-            
-            dataCorpus <- Corpus(VectorSource(stormHurt$EVTYPE))
-            
-            dataCorpus <- tm_map(dataCorpus, stripWhitespace)
-            
-            dataCorpus <- tm_map(dataCorpus, removeWords, stopwords("english"))
-            
-            dataCorpus <- tm_map(dataCorpus, removeWords, c("excessive", "extreme", "unseasonal"))
-            
-            dataCorpus <- tm_map(dataCorpus, PlainTextDocument)
-            
-            
-            dataCorpus <- tm_map(dataCorpus, stemDocument)
-            
-            wordcloud(dataCorpus, max.words = 100, random.order = FALSE,
-                      rot.per=0.35, use.r.layout=TRUE, colors=pal, main="Events resulting in Injury")
-            
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-                                                                                
-                                                                                    # Charts to display data
-            
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-            
-            # Bar Chart 
-            ggplot(data = stormCasualty, aes(x = YEAR, y = DEATH)) +
-              geom_bar(aes(fill = EVTYPE), stat = "identity") +
-              theme(legend.position = "none") +
-              xlab("YEAR") + ylab("DEATHS") + ggtitle("Total Deaths by Weather Events")
-            
-            
-            
-            # Bar Chart 
-            ggplot(data = stormCasualty, aes(x = YEAR, y = INJURY)) +
-              geom_bar(aes(fill = EVTYPE), stat = "identity") +
-              theme(legend.position = "none") +
-              xlab("YEAR") + ylab("INJURY") + ggtitle("Total Injuries by Weather Events")
-            
-            
-            
-            x <- stormCasualty$EVTYPE
-            y1 <- stormCasualty$DEATH
-            y2 <- stormCasualty$INJURY
-           
-            
-            injuries <- table(y2,x)
-    
-            deaths <- table(y1,x)
-            
-            
-
-            par(mar=c(5,4,4,5)+.1)
-
-            barplot(deaths,col = "red",col.axis = "red", cex.axis = 1,xaxt="n",yaxt="n")
-            
-            par(new=TRUE)
-            
-            plot(x, y2,pch=1,col = "blue",col.axis = "blue",cex.axis = 1)
-            
-            axis(4)
-            
-            
-            legend("topleft",col=c("red","blue"),lty=1,c("Death","Injury"))
-            
-#--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-            
- 
-            #Summarize data where a death occurred
-            TopCasualty <- 
+      #Summarize data where a death or injury occurred
+         
+            TopCasualtyYear <- 
               stormCasualty %>%
-              group_by(EVTYPE)  %>%  
-              select(EVTYPE,DEATH = sum(DEATH),INJURY= sum(INJURY)) 
+              group_by(YEAR,EVTYPE)  %>%  
+              summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %>%
+              select(YEAR,EVTYPE,DEATH,INJURY) 
             
             TopInj <- 
               stormCasualty %>%
@@ -290,7 +231,7 @@ library(wordcloud)
               select(EVTYPE,DEATH) 
             
             TopCasualty <- 
-              TopCasualty %>%
+              TopCasualtyYear %>%
               group_by(EVTYPE)  %>%
               summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %>%
               select(EVTYPE,DEATH,INJURY) 
@@ -310,23 +251,101 @@ library(wordcloud)
             # Injury and Death top 20
             stormCS <- merge(TopInj,TopDeath, by = "EVTYPE", all = TRUE)
             
+            #Identify the major weather event types
+            majorEvents <- unique(stormCS$EVTYPE)
+            
+            
+            #Take the top 20 weather events for the top casualty analysis
+            TopCasualtyYear <- TopCasualtyYear[TopCasualtyYear$EVTYPE %in% (majorEvents),]
+           
+          # plot the top 20 causes of death and injury.  
             ggplot(stormCS, aes(DEATH, INJURY)) +
               geom_point(color = 'red') +
               geom_text_repel(aes(label = stormCS$EVTYPE)) +
               theme_classic(base_size = 16)
-       
-            
-#             ggplot(TopCasualty, aes(DEATH, INJURY)) +
-#               geom_point(aes(fill=TopCasualty$EVTYPE), alpha=0.3) +
-#              # geom_text_repel(aes(label = EVTYPE)) +
-#               theme_classic(base_size = 10)
+         
+
     #----------------------------------------------------------------------------------------------------------------------------------------------           
           
     #  2.   Across the United States, which types of events have the greatest economic consequences?
         
     #----------------------------------------------------------------------------------------------------------------------------------------------           
             
+            
+           # PROPDMG	PROPDMGEXP	CROPDMG	CROPDMGEXP
+            
 
+            stormCost <- 
+                   dataNew %>%
+                   group_by(STATE,longitude,latitude,EVTYPE,PROPDMGEXP,CROPDMGEXP)  %>%  
+                   summarize(PROP=sum(PROPDMG),CROP=sum(CROPDMG))  %>%  
+                   select(STATE,longitude,latitude,EVTYPE,PROP,PROPDMGEXP,CROP,CROPDMGEXP) 
+            
+            stormCost <- subset(stormCost,(PROP != 0 | CROP != 0)) 
+       
+           
+             # Divide K values by 1000 to express them as millions
+ 
+            stormCost$PROP <- ifelse(stormCost$PROPDMGEXP == "K",stormCost$PROP <- stormCost$PROP/1000, stormCost$PROP)
+ 
+            stormCost$CROP <- ifelse(stormCost$CROPDMGEXP == "K",stormCost$CROP <- stormCost$CROP/1000, stormCost$CROP)
+            
+            
+            TopCost <-
+             stormCost %>%
+             group_by(EVTYPE) %>%
+             summarize(PROP=sum(PROP),CROP=sum(CROP)) %>%
+             select(EVTYPE,PROP,CROP)
+            
+            #Get the top 5 Prop Cost Events    
+            TopPropCost<- TopCost[order(-TopCost$PROP),]
+            
+            TopPropCost <-  head(TopPropCost,5)
+            
+            #Just look at the top five weather event types by prop damage cost
+            stormPropFive <- merge(stormCost,TopPropCost, by = "EVTYPE")
+            
+            #SHOW OUTPUT FOR THESE  
+            
+            #Get the top 5 Prop Cost Events    
+            TopCropCost<- TopCost[order(-TopCost$CROP),]
+            
+            TopCropCost <-  head(TopCropCost,5)
+            
+            #Just look at the top five weather event types by Crop damage cost
+            stormCropFive <- merge(stormCost,TopCropCost, by = "EVTYPE")
+            
+            #require(mapproj)
+            #require(maps)
+            library(ggmap)
+          
+            
+          
+            map <- get_map(location = 'United States', zoom = 4) 
+            
+            
+            mapProp <- ggmap(map) +
+              geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, col=stormPropFive$EVTYPE), data = stormPropFive, alpha = .5)
+
+                         
+                         
+                         # #             
+# #             mapPropFacets <- mapProp +
+# #                 facet_grid(stormPropFive$EVTYPE ~ .)
+#             
+#             mapPropFacets
+            
+            mapCrop <- ggmap(map) +
+              geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, col=stormCropFive$EVTYPE), data = stormCropFive, alpha = .5)
+           
+            par(mfrow=c(1,2))
+             
+            mapProp
+            
+            mapCrop
+            
+    
+            
 
     }
 

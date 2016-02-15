@@ -19,10 +19,7 @@ February 12, 2016
 
 
 ## Data Processing
--- Data collection is read from a URL proivded by the NOAA, there are aprox 1 Million rows dating back to 1971. Earlier years are less complete.
--- The date fields are split by begin and end dates and times, with another field for timezone.  As part of the processing dates these fields were combined below.
--- Due to the volume of data, and number of events, summary tables have been created to isoloate the top 20 events, in terms of damage to life and property.
--- A separate file, including the average lat and lons for each state, was added to be able to create the google map showing major storms, and the damage to life and crops respectively.
+-- Data collection is read from a URL proivded by the NOAA, there are aprox 1 Million rows dating back to 1971. Earlier years are less complete. The date fields are split by begin and end dates and times, with another field for timezone.  As part of the processing dates these fields were combined below. Due to the volume of data, and number of events, summary tables have been created to isoloate the top 20 events, in terms of damage to life and property.  A separate file, including the average lat and lons for each state, was added to be able to create the google map showing major storms, and the damage to life and crops respectively.
 
  
 ## Synopsis: This analysis focuses primarily on the types of events, and the costs through loss of life, injury, and damage.

@@ -265,10 +265,10 @@ output:
             
             # dev.off()
 ``` 
-     
-![](StormTracking/Figure-html/wordcloud_storm.png)
-     
-     
+           
+```{r wordcloud_storm echo = F, results = 'asis'}
+cat('\n![wordcloud_storm.png](wordcloud_storm.png)\n')
+```         
            
 #   Summarize data where a death or injury occurred by Event Type
 
@@ -336,7 +336,10 @@ output:
               
 ```         
 
-![](StormTracking/Figure-html/StormCasualty.png)
+```{r stormCasualty, echo = F, results = 'asis'}
+cat('\n![StormCasualty.png](StormCasualty.png)\n')
+```  
+
 
 #2.   Across the United States, which types of events have the greatest economic consequences?
  
@@ -426,4 +429,6 @@ output:
   
 ```             
  
-![](StormTracking/Figure-html/StormDamage.png)
+```{r StormDamage, echo = F, results = 'asis'}
+cat('\n![StormDamage.png](StormDamage.png)\n')
+``` 

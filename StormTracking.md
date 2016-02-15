@@ -7,7 +7,7 @@ February 12, 2016
 ## A look at severe weather events over the last 4 decades and their effect on lives, property, and agriculture by state
 ### Synopsis: 
 - Major weather event data is gathered from the U.S National Oceanic and Atmospheric Administration (NOAA) storm database. 
-###This data conatins high-level details including:
+### This data conatins high-level details including:
 <ul>
   <li>The dates of important weather events</li>
   <li>The location where they occurred/li>

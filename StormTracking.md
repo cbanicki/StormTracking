@@ -70,7 +70,7 @@ output:
 
 ```{r}
 
-    #setwd("C://R//RR//P2")
+     #setwd("C://R//RR//P2")
 
 ```
 
@@ -120,9 +120,7 @@ output:
       
       ## Read tracking data
       data <- read.csv("repdata-data-StormData.csv", header = TRUE,na.strings = c("NA"))
-      
-      ## Load lat and long for each state
-      states <- read.csv("StatesLatLong.csv", header = TRUE, na.strings = c("NA"))
+
    
       }
     )
@@ -132,6 +130,11 @@ output:
 ##     Formatting of the data 
    
 ```{r, echo=TRUE}
+
+      
+      ## Load lat and long for each state
+      states <- read.csv("StatesLatLong.csv", header = TRUE, na.strings = c("NA"))
+      
       dataSum <- tbl_df(data)
       
       dataCorpus <- Corpus(VectorSource(dataSum$REMARKS))
@@ -233,11 +236,11 @@ output:
 
 ```{r, echo=TRUE}   
               
-            options(scipen=5)
+           # options(scipen=5)
               
             #png("wordcloud_storm.png", width=12,height=8, units='in', res=300)
   
-            png("wordcloud_storm.png", width=1200,height=800)  
+            #png("wordcloud_storm.png", width=1200,height=800)  
                
             pal <- brewer.pal(9,"YlGnBu")
             pal <- pal[-(1:4)]
@@ -260,8 +263,12 @@ output:
             
             
             
-             dev.off()
+            # dev.off()
 ``` 
+     
+![](StormTracking/Figure-html/wordcloud_storm.png)
+     
+     
            
 #   Summarize data where a death or injury occurred by Event Type
 
@@ -316,19 +323,20 @@ output:
 #plot the top 20 causes of death and injury.  
  
 ```{r, echo=TRUE} 
+            #options(scipen=5)
             
-              options(scipen=5)
+              #png("StormCasualty.png", width=1200,height=800) 
             
-              png("StormCasualty.png", width=1200,height=800) 
-            
-              ggplot(stormCS, aes(DEATH, INJURY)) +
+              ggplot(stormCS, aes(DEATH, INJURY), width=1200,height=800) +
               geom_point(color = 'red') +
               geom_text_repel(aes(label = stormCS$EVTYPE)) +
               theme_classic(base_size = 16)
               
-              dev.off()
+              #dev.off()
               
 ```         
+
+![](StormTracking/Figure-html/StormCasualty.png)
 
 #2.   Across the United States, which types of events have the greatest economic consequences?
  
@@ -381,11 +389,11 @@ output:
 ```{r, echo=TRUE}  
             
             
-            options(scipen=5)
+           # options(scipen=5)
               
             #png("wordcloud_storm.png", width=12,height=8, units='in', res=300)
   
-            png("StormDamage.png", width=1200,height=800)  
+          #  png("StormDamage.png", width=1200,height=800)  
             
             vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
             
@@ -409,13 +417,13 @@ output:
             
             grid.newpage()
             
-            pushViewport(viewport(layout = grid.layout(1, 2)))
+            pushViewport(viewport(layout = grid.layout(1, 2),width=0.5, height=0.5))
             
             print(mapProp, vp = vplayout(1, 1))
             print(mapCrop, vp = vplayout(1, 2))
             
-            dev.off()
+           # dev.off()
   
 ```             
  
-
+![](StormTracking/Figure-html/StormDamage.png)

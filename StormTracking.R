@@ -3,17 +3,18 @@
 
   StormTracking <- function() {
     
-  library(dplyr) #
-  require(data.table) #
-  require(lubridate) #
-  require(ggplot2) #
-  require(ggrepel) #
-  require(ggmap) #
-  require(rworldmap)
+  library(dplyr) 
+  require(data.table) 
+  require(lubridate) 
+  require(ggplot2) 
+  require(ggrepel) 
+  require(ggmap) 
+  require(rworldmap) 
+  require(grid)
   require(scales)
   require(tm)
   require(SnowballC)
-  require(wordcloud) #
+  require(wordcloud) 
    
 # library(grid)
   
@@ -79,15 +80,15 @@
     
     rm(data)
     
-#     timeZones <- data.frame(TIME_ZONE = c("CST","AKS","MST","PST","EST","ESt","HST","SST","AST","GMT","UTC","MDT","EDT","PDT","CDT","GST"),
-#                             tz = c("CST6CDT","America/Anchorage","MST7MDT","PST8PDT","EST5EDT","EST5EDT","HST","Pacific/Samoa","America/Puerto_Rico","GMT","UTC",
-#                                    "US/Mountain","US/Eastern","US/Pacific","US/Central","Asia/Bahrain"))
+    timeZones <- data.frame(TIME_ZONE = c("CST","AKS","MST","PST","EST","ESt","HST","SST","AST","GMT","UTC","MDT","EDT","PDT","CDT","GST"),
+                            tz = c("CST6CDT","America/Anchorage","MST7MDT","PST8PDT","EST5EDT","EST5EDT","HST","Pacific/Samoa","America/Puerto_Rico","GMT","UTC",
+                                   "US/Mountain","US/Eastern","US/Pacific","US/Central","Asia/Bahrain"))
     
-    #  STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
+    # STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
     
-#     dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
-#     
-#     dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
+    dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
+    
+    dataNew <- merge(dataSum,timeZones, by = "TIME_ZONE", all = TRUE)
     
     # Get the average lat and long for each state
     dataNew <- merge(dataSum,states, by = "STATE", all = TRUE)
@@ -101,9 +102,9 @@
     
     dataNew <- tbl_df(dataNew)
     
-    #------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    #                 Interested in getting the datetime by timezone correctly into one field to help with analysis
-    # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                 Interested in getting the datetime by timezone correctly into one field to help with analysis
+# -----------------------------------------------------------------------------------------------------------------------------------------------------------------
    
     # Get just the date
     beginDate <-  format(strptime(dataNew$BGN_DATE, "%m/%d/%Y"), format = "%m/%d/%Y", tz="", usetz=FALSE)
@@ -149,13 +150,13 @@
     
     
 
-      #----------------------------------------------------------------------------------------------------------------------------------------------           
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------           
       
      
-       # Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
+#       1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
       
       
-      #----------------------------------------------------------------------------------------------------------------------------------------------           
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------           
     
     
               stormDeath <- 
@@ -167,15 +168,6 @@
               # Order by most recent year
               stormDeath<- stormDeath[order(-stormDeath$YEAR),] 
               
-#               stormHurt <- 
-#               dataNew %>%
-#               group_by(YEAR=as.numeric(format(Begin,"%Y")),MONTH=as.numeric(format(Begin,"%m")),STATE,EVTYPE)  %>%  
-#               summarize(INJURY=sum(INJURIES, na.rm=TRUE))  %>%  
-#               select(YEAR,MONTH,STATE,EVTYPE,INJURY) 
-#             
-#               # Order by most recent year
-#               stormhURT<- stormHurt[order(-stormHurt$YEAR),]
-              
             
               stormCasualty <- 
               subset(dataNew,(INJURIES != 0 | FATALITIES != 0)) %>%
@@ -184,10 +176,11 @@
               select(YEAR,MONTH,STATE,EVTYPE,INJURY=sum(INJURIES),DEATH=sum(FATALITIES)) 
             
             
- #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
-                                                         # Wordcloud for Remarks,  Deaths vs Injuries
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------           
+                                                         # Wordcloud for Remarks, Deaths vs Injuries
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-            # par(mfrow=c(1,2))
+            
+              # par(mfrow=c(1,2))
             
             pal <- brewer.pal(9,"YlGnBu")
             pal <- pal[-(1:4)]
@@ -210,7 +203,8 @@
             
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------            
-      #Summarize data where a death or injury occurred
+     
+             #Summarize data where a death or injury occurred
          
             TopCasualtyYear <- 
               stormCasualty %>%
@@ -265,14 +259,11 @@
               theme_classic(base_size = 16)
          
 
-    #----------------------------------------------------------------------------------------------------------------------------------------------           
+#----------------------------------------------------------------------------------------------------------------------------------------------------------------------           
           
-    #  2.   Across the United States, which types of events have the greatest economic consequences?
+#                         2.   Across the United States, which types of events have the greatest economic consequences?
         
-    #----------------------------------------------------------------------------------------------------------------------------------------------           
-            
-            
-           # PROPDMG	PROPDMGEXP	CROPDMG	CROPDMGEXP
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------------           
             
 
             stormCost <- 
@@ -315,42 +306,44 @@
             #Just look at the top five weather event types by Crop damage cost
             stormCropFive <- merge(stormCost,TopCropCost, by = "EVTYPE")
             
-            #require(mapproj)
-            #require(maps)
-            library(ggmap)
+           
+#             library(ggmap)
+#             library(grid)
           
             
+            vplayout <- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
+            
+           
           
             map <- get_map(location = 'United States', zoom = 4) 
             
             
             mapProp <- ggmap(map) +
-              geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, col=stormPropFive$EVTYPE), data = stormPropFive, alpha = .5)
+              geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, 
+                             col=stormPropFive$EVTYPE), data = stormPropFive, alpha = 1) 
+            # + scale_size_continuous(range=range(stormPropFive$PROP.x))
 
-                         
-                         
-                         # #             
-# #             mapPropFacets <- mapProp +
-# #                 facet_grid(stormPropFive$EVTYPE ~ .)
-#             
-#             mapPropFacets
-            
+
             mapCrop <- ggmap(map) +
-              geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, col=stormCropFive$EVTYPE), data = stormCropFive, alpha = .5)
-           
-            par(mfrow=c(1,2))
-             
-            mapProp
+              geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, 
+                             col=stormCropFive$EVTYPE), data = stormCropFive, alpha = 1) 
+                         # + scale_size_continuous(range=range(stormCropFive$PROP.x))) 
+              
             
-            mapCrop
             
-    
+            grid.newpage()
             
-
+            pushViewport(viewport(layout = grid.layout(1, 2)))
+            
+            print(mapProp, vp = vplayout(1, 1))
+            print(mapCrop, vp = vplayout(1, 2))
+  
+            
+ 
     }
 
 )
-# return(output)
+
 
 }
 

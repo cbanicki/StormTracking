@@ -19,7 +19,7 @@ February 12, 2016
 
 
 ## Data Processing
--- Data collection is read from a URL proivded by the NOAA, there are aprox 1 Million rows dating back to 1971. Earlier years are less complete. The date fields are split by begin and end dates and times, with another field for timezone.  As part of the processing dates these fields were combined below. Due to the volume of data, and number of events, summary tables have been created to isoloate the top 20 events, in terms of damage to life and property.  A separate file, including the average lat and lons for each state, was added to be able to create the google map showing major storms, and the damage to life and crops respectively.
+Data collection is read from a URL proivded by the NOAA, there are aprox 1 Million rows dating back to 1971. Earlier years are less complete. The date fields are split by begin and end dates and times, with another field for timezone.  As part of the processing dates these fields were combined below. Due to the volume of data, and number of events, summary tables have been created to isoloate the top 20 events, in terms of damage to life and property.  A separate file, including the average lat and lons for each state, was added to be able to create the google map showing major storms, and the damage to life and crops respectively.
 
  
 ## Synopsis: This analysis focuses primarily on the types of events, and the costs through loss of life, injury, and damage.
@@ -28,12 +28,12 @@ February 12, 2016
 - The overall totals are considered for the data collected, without consideration to the years or months occurred
 - Monetary damages have all been converted to Millions of dollars US
 
--- Briefly, the findings suggest that Tornado's and Floods are the most damaging weather events that occur
--- in terms of both the cost of life, as well as monetary damages. 
--- The only exception being that hail contributes largely to the costs associated with crop damage
+Briefly, the findings suggest that Tornado's and Floods are the most damaging weather events that occur
+in terms of both the cost of life, as well as monetary damages. 
+The only exception being that hail contributes largely to the costs associated with crop damage
 
-- If there is a general takeaway from this analysis, perhaps high winds and flood waters are the major weather events
-- that pose the greatest risk to life and property.
+If there is a general takeaway from this analysis, perhaps high winds and flood waters are the major weather events
+that pose the greatest risk to life and property.
 
 -- 
 

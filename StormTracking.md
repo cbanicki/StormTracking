@@ -36,7 +36,7 @@ If there is a general takeaway from this analysis, perhaps high winds and flood 
 that pose the greatest risk to life and property.
 
 ## Results:
-It turns out that the greatest threat to human life from weather-related events is by far Tornadoes.  Overall, the top 5 storm events are the same for both crop-damage and human risk, with the exception of hail (stronger for crop damage).  As would be expected, higher populated areas incur more casualties from weather events, and more rural/farm areas incur greater damage to crops.  Perhaps suprizingly, Tonrnadoes, high-winds, and flooding appear to be much more dangerous than heat-related health issues and lightning.
+It turns out that the greatest threat to human life from weather-related events is by far Tornadoes.  Overall, the top 5 storm events are the same for both crop-damage and human risk, with the exception of hail (stronger for crop damage).  As would be expected, higher populated areas incur more casualties from weather events, and more rural/farm areas incur greater damage to crops.  Perhaps suprizingly, Tornadoes, high-winds, and flooding appear to be much more dangerous than heat-related health issues and lightning.
 
 -- 
 

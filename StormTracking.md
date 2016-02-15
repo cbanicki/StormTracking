@@ -403,9 +403,7 @@ February 12, 2016
                       rot.per=0.35, use.r.layout=TRUE, colors=pal, main="Events resulting in Death")
 ```
 
-![](StormTracking/tree/master/Figure-html/wordcloud_storm.png)
-
-
+![](StormTracking/blob/master/Figure-html/wordcloud_storm.png)
 
 ```r
             # dev.off()
@@ -486,7 +484,7 @@ February 12, 2016
 ## Warning: Removed 16 rows containing missing values (geom_text_repel).
 ```
 
-![](StormTracking/tree/master/Figure-html/StormCasualty.png)
+![](StormTracking/blob/master/Figure-html/StormCasualty.png)
 
 ```r
               #dev.off()
@@ -597,7 +595,7 @@ February 12, 2016
 ## Warning: Removed 50 rows containing missing values (geom_point).
 ```
 
-![](StormTracking/tree/master/Figure-html/StormDamage.png)
+![](StormTracking/blob/master/Figure-html/StormDamage.png)
 
 ```r
            # dev.off()

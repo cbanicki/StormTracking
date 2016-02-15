@@ -10,7 +10,7 @@ February 12, 2016
 ### This data conatins high-level details including:
 <ul>
   <li>The dates of important weather events</li>
-  <li>The location where they occurred/li>
+  <li>The location where they occurred</li>
   <li>The type of event</li>
   <li>The cost in US dollars to property and crops</li>
   <li>The number of lives lost as a result of the event</li>

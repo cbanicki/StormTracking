@@ -120,147 +120,119 @@ The number of injuries sufferred
 <h2>Assignment: Course Project 2</h2>
 <div id="load-the-packages-needed-for-the-script" class="section level3">
 <h3>Load the packages needed for the script:</h3>
-<pre class="r"><code>    library(dplyr) </code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>    require(data.table) </code></pre>
-<pre><code>## Loading required package: data.table</code></pre>
-<pre><code>## 
-## Attaching package: 'data.table'</code></pre>
-<pre><code>## The following objects are masked from 'package:dplyr':
-## 
-##     between, last</code></pre>
-<pre class="r"><code>    require(lubridate) </code></pre>
-<pre><code>## Loading required package: lubridate</code></pre>
-<pre><code>## 
-## Attaching package: 'lubridate'</code></pre>
-<pre><code>## The following objects are masked from 'package:data.table':
-## 
-##     hour, mday, month, quarter, wday, week, yday, year</code></pre>
-<pre class="r"><code>    require(ggplot2) </code></pre>
-<pre><code>## Loading required package: ggplot2</code></pre>
-<pre class="r"><code>    require(ggrepel) </code></pre>
-<pre><code>## Loading required package: ggrepel</code></pre>
-<pre class="r"><code>    require(ggmap) </code></pre>
-<pre><code>## Loading required package: ggmap</code></pre>
-<pre class="r"><code>    require(rworldmap) </code></pre>
-<pre><code>## Loading required package: rworldmap</code></pre>
-<pre><code>## Loading required package: sp</code></pre>
-<pre><code>## ### Welcome to rworldmap ###</code></pre>
-<pre><code>## For a short introduction type :   vignette('rworldmap')</code></pre>
-<pre class="r"><code>    require(grid)</code></pre>
-<pre><code>## Loading required package: grid</code></pre>
-<pre class="r"><code>    require(scales)</code></pre>
-<pre><code>## Loading required package: scales</code></pre>
-<pre class="r"><code>    require(tm)</code></pre>
-<pre><code>## Loading required package: tm</code></pre>
-<pre><code>## Loading required package: NLP</code></pre>
-<pre><code>## 
-## Attaching package: 'NLP'</code></pre>
-<pre><code>## The following object is masked from 'package:ggplot2':
-## 
-##     annotate</code></pre>
-<pre class="r"><code>    require(SnowballC)</code></pre>
-<pre><code>## Loading required package: SnowballC</code></pre>
-<pre class="r"><code>    require(wordcloud) </code></pre>
-<pre><code>## Loading required package: wordcloud</code></pre>
-<pre><code>## Loading required package: RColorBrewer</code></pre>
+<pre class="{r}"><code>
+    library(dplyr) 
+    require(data.table) 
+    require(lubridate) 
+    require(ggplot2) 
+    require(ggrepel) 
+    require(ggmap) 
+    require(rworldmap) 
+    require(grid)
+    require(scales)
+    require(tm)
+    require(SnowballC)
+    require(wordcloud) 
+</code></pre>
 </div>
 <div id="set-the-working-directory" class="section level3">
 <h3>Set the working directory:</h3>
-<pre class="r"><code>    #setwd(&quot;C://R//RR//P2&quot;)</code></pre>
+<pre class="{r}"><code>
+     #setwd(&quot;C://R//RR//P2&quot;)
+</code></pre>
 </div>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the Data</h2>
-<pre class="r"><code>    tryCatch(
+<p>```{r, echo=TRUE}</p>
+<pre><code>tryCatch(
+  
+  {
+    #Check whether you have already dowloaded the data into the working director, and if not, download and unzip it 
+    
+    message(&quot;Checking local drive for data file. If it's not there then trying URL for new file.&quot;)
+    
+    if (!file.exists(&quot;repdata-data-StormData.zip&quot;)) {
       
-      {
-        #Check whether you have already dowloaded the data into the working director, and if not, download and unzip it 
-        
-        message(&quot;Checking local drive for data file. If it's not there then trying URL for new file.&quot;)
-        
-        if (!file.exists(&quot;repdata-data-StormData.zip&quot;)) {
-          
-          fileURL &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
-          
-          fileName &lt;- &quot;repdata-data-StormData.zip&quot;
-          
-          download.file(fileURL, fileName, mode = &quot;wb&quot;)
-          
-          dateDownloaded &lt;- date()
-          
-          unzip(fileName, files = NULL, list = FALSE, overwrite = TRUE,
-                junkpaths = FALSE, exdir = &quot;.&quot;, unzip = &quot;internal&quot;,
-                setTimes = FALSE)
-        }
-        
-      },
-      error=function(cond) {
-        message(paste(&quot;Error getting data:&quot;, fileURL))
-        message(&quot;Original Error Message:&quot;)
-        message(cond)
-        # Return NA
-        stop(&quot;Check connection and try again.&quot;)
-        return(NA)
-      },
-      warning=function(cond) {
-        message(paste(&quot;Warning getting data&quot;, fileURL))
-        message(&quot;Original warning message:&quot;)
-        message(cond)
-      },
+      fileURL &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
       
-      finally={
-        
+      fileName &lt;- &quot;repdata-data-StormData.zip&quot;
       
-      ## Read tracking data
-      data &lt;- read.csv(&quot;repdata-data-StormData.csv&quot;, header = TRUE,na.strings = c(&quot;NA&quot;))
+      download.file(fileURL, fileName, mode = &quot;wb&quot;)
       
-      ## Load lat and long for each state
-      states &lt;- read.csv(&quot;StatesLatLong.csv&quot;, header = TRUE, na.strings = c(&quot;NA&quot;))
-   
-      }
-    )</code></pre>
-<pre><code>## Checking local drive for data file. If it's not there then trying URL for new file.</code></pre>
+      dateDownloaded &lt;- date()
+      
+      unzip(fileName, files = NULL, list = FALSE, overwrite = TRUE,
+            junkpaths = FALSE, exdir = &quot;.&quot;, unzip = &quot;internal&quot;,
+            setTimes = FALSE)
+    }
+    
+  },
+  error=function(cond) {
+    message(paste(&quot;Error getting data:&quot;, fileURL))
+    message(&quot;Original Error Message:&quot;)
+    message(cond)
+    # Return NA
+    stop(&quot;Check connection and try again.&quot;)
+    return(NA)
+  },
+  warning=function(cond) {
+    message(paste(&quot;Warning getting data&quot;, fileURL))
+    message(&quot;Original warning message:&quot;)
+    message(cond)
+  },
+  
+  finally={
+    
+  
+  ## Read tracking data
+  data &lt;- read.csv(&quot;repdata-data-StormData.csv&quot;, header = TRUE,na.strings = c(&quot;NA&quot;))
+
+
+  }
+)</code></pre>
+<p>```</p>
 </div>
 <div id="formatting-of-the-data" class="section level2">
 <h2>Formatting of the data</h2>
-<pre class="r"><code>      dataSum &lt;- tbl_df(data)
-      
-      dataCorpus &lt;- Corpus(VectorSource(dataSum$REMARKS))
-      
-      rm(data)
-      
-      timeZones &lt;- data.frame(TIME_ZONE = c(&quot;CST&quot;,&quot;AKS&quot;,&quot;MST&quot;,&quot;PST&quot;,&quot;EST&quot;,&quot;ESt&quot;,&quot;HST&quot;,&quot;SST&quot;,&quot;AST&quot;,&quot;GMT&quot;,&quot;UTC&quot;,&quot;MDT&quot;,&quot;EDT&quot;,&quot;PDT&quot;,&quot;CDT&quot;,&quot;GST&quot;),
-                              tz = c(&quot;CST6CDT&quot;,&quot;America/Anchorage&quot;,&quot;MST7MDT&quot;,&quot;PST8PDT&quot;,&quot;EST5EDT&quot;,&quot;EST5EDT&quot;,&quot;HST&quot;,&quot;Pacific/Samoa&quot;,&quot;America/Puerto_Rico&quot;,&quot;GMT&quot;,&quot;UTC&quot;,
-                                     &quot;US/Mountain&quot;,&quot;US/Eastern&quot;,&quot;US/Pacific&quot;,&quot;US/Central&quot;,&quot;Asia/Bahrain&quot;))
-      
-      # STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
-      
-      dataNew &lt;- merge(dataSum,timeZones, by = &quot;TIME_ZONE&quot;, all = TRUE)
-      
-      dataNew &lt;- merge(dataSum,timeZones, by = &quot;TIME_ZONE&quot;, all = TRUE)
-      
-      # Get the average lat and long for each state
-      dataNew &lt;- merge(dataSum,states, by = &quot;STATE&quot;, all = TRUE)
-      
-      # some Event Types are in mixed case, do avoid duplication convert them to UPPER
-      dataNew$EVTYPE &lt;- toupper(dataNew$EVTYPE)
-      
-      #Order the data by the latest date just for more complete data in head commands
-      dataNew&lt;- dataNew[order(-dataNew$REFNUM),] 
-      
-      
-      dataNew &lt;- tbl_df(dataNew)</code></pre>
+<p>```{r, echo=TRUE}</p>
+<pre><code>  ## Load lat and long for each state
+  states &lt;- read.csv(&quot;StatesLatLong.csv&quot;, header = TRUE, na.strings = c(&quot;NA&quot;))
+  
+  dataSum &lt;- tbl_df(data)
+  
+  dataCorpus &lt;- Corpus(VectorSource(dataSum$REMARKS))
+  
+  rm(data)
+  
+  timeZones &lt;- data.frame(TIME_ZONE = c(&quot;CST&quot;,&quot;AKS&quot;,&quot;MST&quot;,&quot;PST&quot;,&quot;EST&quot;,&quot;ESt&quot;,&quot;HST&quot;,&quot;SST&quot;,&quot;AST&quot;,&quot;GMT&quot;,&quot;UTC&quot;,&quot;MDT&quot;,&quot;EDT&quot;,&quot;PDT&quot;,&quot;CDT&quot;,&quot;GST&quot;),
+                          tz = c(&quot;CST6CDT&quot;,&quot;America/Anchorage&quot;,&quot;MST7MDT&quot;,&quot;PST8PDT&quot;,&quot;EST5EDT&quot;,&quot;EST5EDT&quot;,&quot;HST&quot;,&quot;Pacific/Samoa&quot;,&quot;America/Puerto_Rico&quot;,&quot;GMT&quot;,&quot;UTC&quot;,
+                                 &quot;US/Mountain&quot;,&quot;US/Eastern&quot;,&quot;US/Pacific&quot;,&quot;US/Central&quot;,&quot;Asia/Bahrain&quot;))
+  
+  # STill not mapped ... GST  SCT PDT CDT CSt ESY CSC ADT UNK  
+  
+  dataNew &lt;- merge(dataSum,timeZones, by = &quot;TIME_ZONE&quot;, all = TRUE)
+  
+  dataNew &lt;- merge(dataSum,timeZones, by = &quot;TIME_ZONE&quot;, all = TRUE)
+  
+  # Get the average lat and long for each state
+  dataNew &lt;- merge(dataSum,states, by = &quot;STATE&quot;, all = TRUE)
+  
+  # some Event Types are in mixed case, do avoid duplication convert them to UPPER
+  dataNew$EVTYPE &lt;- toupper(dataNew$EVTYPE)
+  
+  #Order the data by the latest date just for more complete data in head commands
+  dataNew&lt;- dataNew[order(-dataNew$REFNUM),] 
+  
+  
+  dataNew &lt;- tbl_df(dataNew)</code></pre>
+<p>```</p>
 <p>## Interested in getting the datetime by timezone correctly into one field to help with analysis</p>
-<p>```r # Get just the date beginDate &lt;- format(strptime(dataNew$BGN_DATE, “%m/%d/%Y”), format = “%m/%d/%Y”, tz=“”, usetz=FALSE)</p>
-<pre><code>  endDate &lt;-  format(strptime(dataNew$BGN_DATE, &quot;%m/%d/%Y&quot;), format = &quot;%m/%d/%Y&quot;, tz=&quot;&quot;, usetz=FALSE)
+<p>```{r, echo=TRUE}</p>
+<pre><code>  # Get just the date
+  beginDate &lt;-  format(strptime(dataNew$BGN_DATE, &quot;%m/%d/%Y&quot;), format = &quot;%m/%d/%Y&quot;, tz=&quot;&quot;, usetz=FALSE)
+  
+  endDate &lt;-  format(strptime(dataNew$BGN_DATE, &quot;%m/%d/%Y&quot;), format = &quot;%m/%d/%Y&quot;, tz=&quot;&quot;, usetz=FALSE)
   
 
   # Get just the time
@@ -300,202 +272,196 @@ The number of injuries sufferred
 </div>
 <div id="across-the-united-states-which-types-of-events-as-indicated-in-the-evtype-variable-are-most-harmful-with-respect-to-population-health" class="section level1">
 <h1>1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?</h1>
-<pre class="r"><code>              # Summarize data by fatality
-              stormDeath &lt;- 
-              dataNew %&gt;%
-              group_by(YEAR=as.numeric(format(Begin,&quot;%Y&quot;)),MONTH=as.numeric(format(Begin,&quot;%m&quot;)),STATE,EVTYPE)  %&gt;%  
-              summarize(DEATH=sum(FATALITIES, na.rm=TRUE))  %&gt;%  
-              select(YEAR,MONTH,STATE,EVTYPE,DEATH) 
-            
-              # Order by most recent year
-              stormDeath&lt;- stormDeath[order(-stormDeath$YEAR),] 
-              
-              # Summarize data by injury
-              stormCasualty &lt;- 
-              subset(dataNew,(INJURIES != 0 | FATALITIES != 0)) %&gt;%
-              group_by(YEAR=as.numeric(format(Begin,&quot;%Y&quot;)),MONTH=as.numeric(format(Begin,&quot;%m&quot;)),STATE,EVTYPE)  %&gt;%  
-              #summarize(INJURY=sum(INJURIES),DEATH=sum(FATALITIES))  %&gt;%  
-              select(YEAR,MONTH,STATE,EVTYPE,INJURY=sum(INJURIES),DEATH=sum(FATALITIES)) </code></pre>
+<p>```{r, echo=TRUE}</p>
+<pre><code>          # Summarize data by fatality
+          stormDeath &lt;- 
+          dataNew %&gt;%
+          group_by(YEAR=as.numeric(format(Begin,&quot;%Y&quot;)),MONTH=as.numeric(format(Begin,&quot;%m&quot;)),STATE,EVTYPE)  %&gt;%  
+          summarize(DEATH=sum(FATALITIES, na.rm=TRUE))  %&gt;%  
+          select(YEAR,MONTH,STATE,EVTYPE,DEATH) 
+        
+          # Order by most recent year
+          stormDeath&lt;- stormDeath[order(-stormDeath$YEAR),] 
+          
+          # Summarize data by injury
+          stormCasualty &lt;- 
+          subset(dataNew,(INJURIES != 0 | FATALITIES != 0)) %&gt;%
+          group_by(YEAR=as.numeric(format(Begin,&quot;%Y&quot;)),MONTH=as.numeric(format(Begin,&quot;%m&quot;)),STATE,EVTYPE)  %&gt;%  
+          #summarize(INJURY=sum(INJURIES),DEATH=sum(FATALITIES))  %&gt;%  
+          select(YEAR,MONTH,STATE,EVTYPE,INJURY=sum(INJURIES),DEATH=sum(FATALITIES)) </code></pre>
+<p>```</p>
 </div>
 <div id="wordcloud-from-the-remarks-deaths-vs-injuries" class="section level1">
 <h1>Wordcloud from the Remarks, Deaths vs Injuries</h1>
-<pre class="r"><code>            options(scipen=5)
-              
-            #png(&quot;wordcloud_storm.png&quot;, width=12,height=8, units='in', res=300)
-  
-            png(&quot;wordcloud_storm.png&quot;, width=1200,height=800)  
-               
-            pal &lt;- brewer.pal(9,&quot;YlGnBu&quot;)
-            pal &lt;- pal[-(1:4)]
-            
-            dataCorpus &lt;- Corpus(VectorSource(stormDeath$EVTYPE))
-            
-            dataCorpus &lt;- tm_map(dataCorpus, stripWhitespace)
-            
-            dataCorpus &lt;- tm_map(dataCorpus, removeWords, stopwords(&quot;english&quot;))
-            
-            dataCorpus &lt;- tm_map(dataCorpus, removeWords, c(&quot;excessive&quot;, &quot;extreme&quot;, &quot;unseasonal&quot;))
-            
-            dataCorpus &lt;- tm_map(dataCorpus, PlainTextDocument)
-            
-            
-            dataCorpus &lt;- tm_map(dataCorpus, stemDocument)
-            
-            wordcloud(dataCorpus, max.words = 50, random.order = FALSE,
-                      rot.per=0.35, use.r.layout=TRUE, colors=pal, main=&quot;Events resulting in Death&quot;)
-            
-            
-            
-             dev.off()</code></pre>
-<pre><code>## png 
-##   2</code></pre>
+<p>```{r, echo=TRUE}</p>
+<pre><code>       # options(scipen=5)
+          
+        #png(&quot;wordcloud_storm.png&quot;, width=12,height=8, units='in', res=300)
+
+        #png(&quot;wordcloud_storm.png&quot;, width=1200,height=800)  
+           
+        pal &lt;- brewer.pal(9,&quot;YlGnBu&quot;)
+        pal &lt;- pal[-(1:4)]
+        
+        dataCorpus &lt;- Corpus(VectorSource(stormDeath$EVTYPE))
+        
+        dataCorpus &lt;- tm_map(dataCorpus, stripWhitespace)
+        
+        dataCorpus &lt;- tm_map(dataCorpus, removeWords, stopwords(&quot;english&quot;))
+        
+        dataCorpus &lt;- tm_map(dataCorpus, removeWords, c(&quot;excessive&quot;, &quot;extreme&quot;, &quot;unseasonal&quot;))
+        
+        dataCorpus &lt;- tm_map(dataCorpus, PlainTextDocument)
+        
+        
+        dataCorpus &lt;- tm_map(dataCorpus, stemDocument)
+        
+        wordcloud(dataCorpus, max.words = 50, random.order = FALSE,
+                  rot.per=0.35, use.r.layout=TRUE, colors=pal, main=&quot;Events resulting in Death&quot;)
+        
+        
+        
+        # dev.off()</code></pre>
+<p>```</p>
 </div>
 <div id="summarize-data-where-a-death-or-injury-occurred-by-event-type" class="section level1">
 <h1>Summarize data where a death or injury occurred by Event Type</h1>
-<pre class="r"><code>            TopCasualtyYear &lt;- 
-              stormCasualty %&gt;%
-              group_by(YEAR,EVTYPE)  %&gt;%  
-              summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %&gt;%
-              select(YEAR,EVTYPE,DEATH,INJURY) 
-            
-            TopInj &lt;- 
-              stormCasualty %&gt;%
-              group_by(EVTYPE)  %&gt;%  
-              summarize(INJURY=sum(INJURY, na.rm=TRUE))  %&gt;%  
-              select(EVTYPE,INJURY) 
-            
-            TopDeath &lt;- 
-              stormCasualty %&gt;%
-              group_by(EVTYPE)  %&gt;%  
-              summarize(DEATH=sum(DEATH, na.rm=TRUE))  %&gt;%  
-              select(EVTYPE,DEATH) 
-            
-            TopCasualty &lt;- 
-              TopCasualtyYear %&gt;%
-              group_by(EVTYPE)  %&gt;%
-              summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %&gt;%
-              select(EVTYPE,DEATH,INJURY) 
-            
-             
-            #Get the top 20 death causing weather types    
-            TopInj&lt;- TopInj[order(-TopInj$INJURY),]
-       
-            TopInj&lt;- head(TopInj,20)
-            
+<p>```{r, echo=TRUE}<br /> TopCasualtyYear &lt;- stormCasualty %&gt;% group_by(YEAR,EVTYPE) %&gt;%<br /> summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %&gt;% select(YEAR,EVTYPE,DEATH,INJURY)</p>
+<pre><code>        TopInj &lt;- 
+          stormCasualty %&gt;%
+          group_by(EVTYPE)  %&gt;%  
+          summarize(INJURY=sum(INJURY, na.rm=TRUE))  %&gt;%  
+          select(EVTYPE,INJURY) 
         
-            #Get the top 20 death causing weather types    
-            TopDeath &lt;- TopDeath[order(-TopDeath$DEATH),]
-            
-            TopDeath &lt;- head(TopDeath,20)
-            
-            # Injury and Death top 20
-            stormCS &lt;- merge(TopInj,TopDeath, by = &quot;EVTYPE&quot;, all = TRUE)
-            
-            #Identify the major weather event types
-            majorEvents &lt;- unique(stormCS$EVTYPE)
-            
-            
-            #Take the top 20 weather events for the top casualty analysis
-            TopCasualtyYear &lt;- TopCasualtyYear[TopCasualtyYear$EVTYPE %in% (majorEvents),]</code></pre>
+        TopDeath &lt;- 
+          stormCasualty %&gt;%
+          group_by(EVTYPE)  %&gt;%  
+          summarize(DEATH=sum(DEATH, na.rm=TRUE))  %&gt;%  
+          select(EVTYPE,DEATH) 
+        
+        TopCasualty &lt;- 
+          TopCasualtyYear %&gt;%
+          group_by(EVTYPE)  %&gt;%
+          summarize(DEATH=sum(DEATH),INJURY=sum(INJURY)) %&gt;%
+          select(EVTYPE,DEATH,INJURY) 
+        
+         
+        #Get the top 20 death causing weather types    
+        TopInj&lt;- TopInj[order(-TopInj$INJURY),]
+   
+        TopInj&lt;- head(TopInj,20)
+        
+    
+        #Get the top 20 death causing weather types    
+        TopDeath &lt;- TopDeath[order(-TopDeath$DEATH),]
+        
+        TopDeath &lt;- head(TopDeath,20)
+        
+        # Injury and Death top 20
+        stormCS &lt;- merge(TopInj,TopDeath, by = &quot;EVTYPE&quot;, all = TRUE)
+        
+        #Identify the major weather event types
+        majorEvents &lt;- unique(stormCS$EVTYPE)
+        
+        
+        #Take the top 20 weather events for the top casualty analysis
+        TopCasualtyYear &lt;- TopCasualtyYear[TopCasualtyYear$EVTYPE %in% (majorEvents),]</code></pre>
+<p>```</p>
 </div>
 <div id="plot-the-top-20-causes-of-death-and-injury." class="section level1">
 <h1>plot the top 20 causes of death and injury.</h1>
-<pre class="r"><code>              options(scipen=5)
-            
-              png(&quot;StormCasualty.png&quot;, width=1200,height=800) 
-            
-              ggplot(stormCS, aes(DEATH, INJURY)) +
-              geom_point(color = 'red') +
-              geom_text_repel(aes(label = stormCS$EVTYPE)) +
-              theme_classic(base_size = 16)</code></pre>
-<pre><code>## Warning: Removed 16 rows containing missing values (geom_point).</code></pre>
-<pre><code>## Warning: Removed 16 rows containing missing values (geom_text_repel).</code></pre>
-<pre class="r"><code>              dev.off()</code></pre>
-<pre><code>## png 
-##   2</code></pre>
+<p>```{r, echo=TRUE} #options(scipen=5)</p>
+<pre><code>          #png(&quot;StormCasualty.png&quot;, width=1200,height=800) 
+        
+          ggplot(stormCS, aes(DEATH, INJURY), width=1200,height=800) +
+          geom_point(color = 'red') +
+          geom_text_repel(aes(label = stormCS$EVTYPE)) +
+          theme_classic(base_size = 16)
+          
+          #dev.off()
+          </code></pre>
+<p>```</p>
 </div>
 <div id="across-the-united-states-which-types-of-events-have-the-greatest-economic-consequences" class="section level1">
 <h1>2. Across the United States, which types of events have the greatest economic consequences?</h1>
 <div id="summrize-data-by-cost-to-property-and-crops" class="section level2">
 <h2>Summrize data by cost to property and crops</h2>
-<pre class="r"><code>            stormCost &lt;- 
-                   dataNew %&gt;%
-                   group_by(STATE,longitude,latitude,EVTYPE,PROPDMGEXP,CROPDMGEXP)  %&gt;%  
-                   summarize(PROP=sum(PROPDMG),CROP=sum(CROPDMG))  %&gt;%  
-                   select(STATE,longitude,latitude,EVTYPE,PROP,PROPDMGEXP,CROP,CROPDMGEXP) 
-            
-            stormCost &lt;- subset(stormCost,(PROP != 0 | CROP != 0)) 
+<p>```{r, echo=TRUE} stormCost &lt;- dataNew %&gt;% group_by(STATE,longitude,latitude,EVTYPE,PROPDMGEXP,CROPDMGEXP) %&gt;%<br /> summarize(PROP=sum(PROPDMG),CROP=sum(CROPDMG)) %&gt;%<br /> select(STATE,longitude,latitude,EVTYPE,PROP,PROPDMGEXP,CROP,CROPDMGEXP)</p>
+<pre><code>        stormCost &lt;- subset(stormCost,(PROP != 0 | CROP != 0)) 
+   
        
-           
-             # Divide K values by 1000 to express them as millions
- 
-            stormCost$PROP &lt;- ifelse(stormCost$PROPDMGEXP == &quot;K&quot;,stormCost$PROP &lt;- stormCost$PROP/1000, stormCost$PROP)
- 
-            stormCost$CROP &lt;- ifelse(stormCost$CROPDMGEXP == &quot;K&quot;,stormCost$CROP &lt;- stormCost$CROP/1000, stormCost$CROP)
-            
-            
-            TopCost &lt;-
-             stormCost %&gt;%
-             group_by(EVTYPE) %&gt;%
-             summarize(PROP=sum(PROP),CROP=sum(CROP)) %&gt;%
-             select(EVTYPE,PROP,CROP)
-            
-            #Get the top 5 Prop Cost Events    
-            TopPropCost&lt;- TopCost[order(-TopCost$PROP),]
-            
-            TopPropCost &lt;-  head(TopPropCost,5)
-            
-            #Just look at the top five weather event types by prop damage cost
-            stormPropFive &lt;- merge(stormCost,TopPropCost, by = &quot;EVTYPE&quot;)
-            
-            #SHOW OUTPUT FOR THESE  
-            
-            #Get the top 5 Prop Cost Events    
-            TopCropCost&lt;- TopCost[order(-TopCost$CROP),]
-            
-            TopCropCost &lt;-  head(TopCropCost,5)
-            
-            #Just look at the top five weather event types by Crop damage cost
-            stormCropFive &lt;- merge(stormCost,TopCropCost, by = &quot;EVTYPE&quot;)</code></pre>
+         # Divide K values by 1000 to express them as millions
+
+        stormCost$PROP &lt;- ifelse(stormCost$PROPDMGEXP == &quot;K&quot;,stormCost$PROP &lt;- stormCost$PROP/1000, stormCost$PROP)
+
+        stormCost$CROP &lt;- ifelse(stormCost$CROPDMGEXP == &quot;K&quot;,stormCost$CROP &lt;- stormCost$CROP/1000, stormCost$CROP)
+        
+        
+        TopCost &lt;-
+         stormCost %&gt;%
+         group_by(EVTYPE) %&gt;%
+         summarize(PROP=sum(PROP),CROP=sum(CROP)) %&gt;%
+         select(EVTYPE,PROP,CROP)
+        
+        #Get the top 5 Prop Cost Events    
+        TopPropCost&lt;- TopCost[order(-TopCost$PROP),]
+        
+        TopPropCost &lt;-  head(TopPropCost,5)
+        
+        #Just look at the top five weather event types by prop damage cost
+        stormPropFive &lt;- merge(stormCost,TopPropCost, by = &quot;EVTYPE&quot;)
+        
+        #SHOW OUTPUT FOR THESE  
+        
+        #Get the top 5 Prop Cost Events    
+        TopCropCost&lt;- TopCost[order(-TopCost$CROP),]
+        
+        TopCropCost &lt;-  head(TopCropCost,5)
+        
+        #Just look at the top five weather event types by Crop damage cost
+        stormCropFive &lt;- merge(stormCost,TopCropCost, by = &quot;EVTYPE&quot;)
+``` 
+        
+       </code></pre>
 </div>
 <div id="graph-of-top-5-weather-events-by-cost-to-propery-and-crops" class="section level2">
 <h2>Graph of Top 5 weather events by cost to propery and crops</h2>
-<pre class="r"><code>            options(scipen=5)
-              
-            #png(&quot;wordcloud_storm.png&quot;, width=12,height=8, units='in', res=300)
-  
-            png(&quot;StormDamage.png&quot;, width=1200,height=800)  
-            
-            vplayout &lt;- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
-            
-           
+<p>```{r, echo=TRUE}</p>
+<pre><code>       # options(scipen=5)
           
-            map &lt;- get_map(location = 'United States', zoom = 4) </code></pre>
-<pre><code>## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=United+States&amp;zoom=4&amp;size=640x640&amp;scale=2&amp;maptype=terrain&amp;language=en-EN&amp;sensor=false</code></pre>
-<pre><code>## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=United%20States&amp;sensor=false</code></pre>
-<pre class="r"><code>            mapProp &lt;- ggmap(map) +
-              geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, 
-                             col=stormPropFive$EVTYPE), data = stormPropFive, alpha = 1) 
-            # + scale_size_continuous(range=range(stormPropFive$PROP.x))
+        #png(&quot;wordcloud_storm.png&quot;, width=12,height=8, units='in', res=300)
 
-            mapCrop &lt;- ggmap(map) +
-              geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, 
-                             col=stormCropFive$EVTYPE), data = stormCropFive, alpha = 1) 
-                         # + scale_size_continuous(range=range(stormCropFive$PROP.x))) 
-              
-            
-            
-            grid.newpage()
-            
-            pushViewport(viewport(layout = grid.layout(1, 2)))
-            
-            print(mapProp, vp = vplayout(1, 1))</code></pre>
-<pre><code>## Warning: Removed 50 rows containing missing values (geom_point).</code></pre>
-<pre class="r"><code>            print(mapCrop, vp = vplayout(1, 2))</code></pre>
-<pre><code>## Warning: Removed 50 rows containing missing values (geom_point).</code></pre>
-<pre class="r"><code>            dev.off()</code></pre>
-<pre><code>## png 
-##   2</code></pre>
+      #  png(&quot;StormDamage.png&quot;, width=1200,height=800)  
+        
+        vplayout &lt;- function(x, y) viewport(layout.pos.row = x, layout.pos.col = y)
+        
+       
+      
+        map &lt;- get_map(location = 'United States', zoom = 4) 
+        
+        
+        mapProp &lt;- ggmap(map) +
+          geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, 
+                         col=stormPropFive$EVTYPE), data = stormPropFive, alpha = 1) 
+        # + scale_size_continuous(range=range(stormPropFive$PROP.x))
+
+
+        mapCrop &lt;- ggmap(map) +
+          geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, 
+                         col=stormCropFive$EVTYPE), data = stormCropFive, alpha = 1) 
+                     # + scale_size_continuous(range=range(stormCropFive$PROP.x))) 
+          
+        
+        
+        grid.newpage()
+        
+        pushViewport(viewport(layout = grid.layout(1, 2),width=1, height=1))
+        
+        print(mapProp, vp = vplayout(1, 1))
+        print(mapCrop, vp = vplayout(1, 2))
+        
+       # dev.off()</code></pre>
+<p>```</p>
 </div>
 </div>
 

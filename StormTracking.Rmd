@@ -266,9 +266,7 @@ output:
             # dev.off()
 ``` 
            
-```{r wordcloud_storm echo = F, results = 'asis'}
-cat('\n![wordcloud_storm.png](wordcloud_storm.png)\n')
-```         
+
            
 #   Summarize data where a death or injury occurred by Event Type
 
@@ -335,10 +333,6 @@ cat('\n![wordcloud_storm.png](wordcloud_storm.png)\n')
               #dev.off()
               
 ```         
-
-```{r stormCasualty, echo = F, results = 'asis'}
-cat('\n![StormCasualty.png](StormCasualty.png)\n')
-```  
 
 
 #2.   Across the United States, which types of events have the greatest economic consequences?
@@ -420,7 +414,7 @@ cat('\n![StormCasualty.png](StormCasualty.png)\n')
             
             grid.newpage()
             
-            pushViewport(viewport(layout = grid.layout(1, 2),width=0.5, height=0.5))
+            pushViewport(viewport(layout = grid.layout(1, 2),width=1, height=1))
             
             print(mapProp, vp = vplayout(1, 1))
             print(mapCrop, vp = vplayout(1, 2))
@@ -428,7 +422,4 @@ cat('\n![StormCasualty.png](StormCasualty.png)\n')
            # dev.off()
   
 ```             
- 
-```{r StormDamage, echo = F, results = 'asis'}
-cat('\n![StormDamage.png](StormDamage.png)\n')
-``` 
+

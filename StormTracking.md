@@ -1,12 +1,7 @@
+# StormTracking.Rmd
+Chad Banicki  
+February 12, 2016  
 
----
-title: "StormTracking.Rmd"
-author: "Chad Banicki"
-date: "February 12, 2016"
-output:    
-  html_document:        
-    keep_md: yes
----
 
 #   Reproducible Research
 ## A look at severe weather events over the last 4 decades and their effect on lives, property, and agriculture by state
@@ -49,35 +44,180 @@ output:
 
 ### Load the packages needed for the script:
    
-```{r}   
 
+```r
     library(dplyr) 
-    require(data.table) 
-    require(lubridate) 
-    require(ggplot2) 
-    require(ggrepel) 
-    require(ggmap) 
-    require(rworldmap) 
-    require(grid)
-    require(scales)
-    require(tm)
-    require(SnowballC)
-    require(wordcloud) 
+```
 
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
+    require(data.table) 
+```
+
+```
+## Loading required package: data.table
+```
+
+```
+## 
+## Attaching package: 'data.table'
+```
+
+```
+## The following objects are masked from 'package:dplyr':
+## 
+##     between, last
+```
+
+```r
+    require(lubridate) 
+```
+
+```
+## Loading required package: lubridate
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following objects are masked from 'package:data.table':
+## 
+##     hour, mday, month, quarter, wday, week, yday, year
+```
+
+```r
+    require(ggplot2) 
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
+    require(ggrepel) 
+```
+
+```
+## Loading required package: ggrepel
+```
+
+```r
+    require(ggmap) 
+```
+
+```
+## Loading required package: ggmap
+```
+
+```r
+    require(rworldmap) 
+```
+
+```
+## Loading required package: rworldmap
+```
+
+```
+## Loading required package: sp
+```
+
+```
+## ### Welcome to rworldmap ###
+```
+
+```
+## For a short introduction type : 	 vignette('rworldmap')
+```
+
+```r
+    require(grid)
+```
+
+```
+## Loading required package: grid
+```
+
+```r
+    require(scales)
+```
+
+```
+## Loading required package: scales
+```
+
+```r
+    require(tm)
+```
+
+```
+## Loading required package: tm
+```
+
+```
+## Loading required package: NLP
+```
+
+```
+## 
+## Attaching package: 'NLP'
+```
+
+```
+## The following object is masked from 'package:ggplot2':
+## 
+##     annotate
+```
+
+```r
+    require(SnowballC)
+```
+
+```
+## Loading required package: SnowballC
+```
+
+```r
+    require(wordcloud) 
+```
+
+```
+## Loading required package: wordcloud
+```
+
+```
+## Loading required package: RColorBrewer
 ```
  
 ###   Set the working directory:
 
-```{r}
 
+```r
      #setwd("C://R//RR//P2")
-
 ```
 
 ##     Load the Data
  
-```{r, echo=TRUE} 
 
+```r
     tryCatch(
       
       {
@@ -124,14 +264,16 @@ output:
    
       }
     )
-  
-```    
+```
+
+```
+## Checking local drive for data file. If it's not there then trying URL for new file.
+```
   
 ##     Formatting of the data 
    
-```{r, echo=TRUE}
 
-      
+```r
       ## Load lat and long for each state
       states <- read.csv("StatesLatLong.csv", header = TRUE, na.strings = c("NA"))
       
@@ -162,13 +304,13 @@ output:
       
       
       dataNew <- tbl_df(dataNew)
-  ```     
+```
   
   
   ##  Interested in getting the datetime by timezone correctly into one field to help with analysis
   
-  ```{r, echo=TRUE} 
-    
+  
+  ```r
       # Get just the date
       beginDate <-  format(strptime(dataNew$BGN_DATE, "%m/%d/%Y"), format = "%m/%d/%Y", tz="", usetz=FALSE)
       
@@ -207,13 +349,12 @@ output:
       End <- strptime(as.character(End), format = "%m/%d/%Y %I:%M:%S %p")
       
       dataNew <- cbind(dataNew,Begin,End)
-    
-```   
+  ```
      
 #   1. Across the United States, which types of events (as indicated in the EVTYPE variable) are most harmful with respect to population health?
       
-```{r, echo=TRUE}   
-    
+
+```r
               # Summarize data by fatality
               stormDeath <- 
               dataNew %>%
@@ -230,12 +371,12 @@ output:
               group_by(YEAR=as.numeric(format(Begin,"%Y")),MONTH=as.numeric(format(Begin,"%m")),STATE,EVTYPE)  %>%  
               #summarize(INJURY=sum(INJURIES),DEATH=sum(FATALITIES))  %>%  
               select(YEAR,MONTH,STATE,EVTYPE,INJURY=sum(INJURIES),DEATH=sum(FATALITIES)) 
-```             
+```
 
 #   Wordcloud from the Remarks, Deaths vs Injuries 
 
-```{r, echo=TRUE}   
-              
+
+```r
            # options(scipen=5)
               
             #png("wordcloud_storm.png", width=12,height=8, units='in', res=300)
@@ -260,17 +401,20 @@ output:
             
             wordcloud(dataCorpus, max.words = 50, random.order = FALSE,
                       rot.per=0.35, use.r.layout=TRUE, colors=pal, main="Events resulting in Death")
-            
-            
-            
+```
+
+![](StormTracking_files/figure-html/unnamed-chunk-7-1.png)
+
+```r
             # dev.off()
-``` 
+```
            
 
            
 #   Summarize data where a death or injury occurred by Event Type
 
-```{r, echo=TRUE}       
+
+```r
             TopCasualtyYear <- 
               stormCasualty %>%
               group_by(YEAR,EVTYPE)  %>%  
@@ -316,11 +460,12 @@ output:
             
             #Take the top 20 weather events for the top casualty analysis
             TopCasualtyYear <- TopCasualtyYear[TopCasualtyYear$EVTYPE %in% (majorEvents),]
-``` 
+```
  
 #plot the top 20 causes of death and injury.  
  
-```{r, echo=TRUE} 
+
+```r
             #options(scipen=5)
             
               #png("StormCasualty.png", width=1200,height=800) 
@@ -329,16 +474,28 @@ output:
               geom_point(color = 'red') +
               geom_text_repel(aes(label = stormCS$EVTYPE)) +
               theme_classic(base_size = 16)
-              
+```
+
+```
+## Warning: Removed 16 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 16 rows containing missing values (geom_text_repel).
+```
+
+![](StormTracking_files/figure-html/unnamed-chunk-9-1.png)
+
+```r
               #dev.off()
-              
-```         
+```
 
 
 #2.   Across the United States, which types of events have the greatest economic consequences?
  
 ##Summrize data by cost to property and crops       
-```{r, echo=TRUE} 
+
+```r
             stormCost <- 
                    dataNew %>%
                    group_by(STATE,longitude,latitude,EVTYPE,PROPDMGEXP,CROPDMGEXP)  %>%  
@@ -378,14 +535,13 @@ output:
             
             #Just look at the top five weather event types by Crop damage cost
             stormCropFive <- merge(stormCost,TopCropCost, by = "EVTYPE")
-    ``` 
+```
             
            
 ##Graph of Top 5 weather events by cost to propery and crops
 
-```{r, echo=TRUE}  
-            
-            
+
+```r
            # options(scipen=5)
               
             #png("wordcloud_storm.png", width=12,height=8, units='in', res=300)
@@ -397,13 +553,21 @@ output:
            
           
             map <- get_map(location = 'United States', zoom = 4) 
-            
-            
+```
+
+```
+## Map from URL : http://maps.googleapis.com/maps/api/staticmap?center=United+States&zoom=4&size=640x640&scale=2&maptype=terrain&language=en-EN&sensor=false
+```
+
+```
+## Information from URL : http://maps.googleapis.com/maps/api/geocode/json?address=United%20States&sensor=false
+```
+
+```r
             mapProp <- ggmap(map) +
               geom_point(aes(x = stormPropFive$longitude, y = stormPropFive$latitude, size = stormPropFive$PROP.x, 
                              col=stormPropFive$EVTYPE), data = stormPropFive, alpha = 1) 
             # + scale_size_continuous(range=range(stormPropFive$PROP.x))
-
 
             mapCrop <- ggmap(map) +
               geom_point(aes(x = stormCropFive$longitude, y = stormCropFive$latitude, size = stormCropFive$CROP.x, 
@@ -417,9 +581,23 @@ output:
             pushViewport(viewport(layout = grid.layout(1, 2),width=1, height=1))
             
             print(mapProp, vp = vplayout(1, 1))
+```
+
+```
+## Warning: Removed 50 rows containing missing values (geom_point).
+```
+
+```r
             print(mapCrop, vp = vplayout(1, 2))
-            
+```
+
+```
+## Warning: Removed 50 rows containing missing values (geom_point).
+```
+
+![](StormTracking_files/figure-html/unnamed-chunk-11-1.png)
+
+```r
            # dev.off()
-  
-```             
+```
 
